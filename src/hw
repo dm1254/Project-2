@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <stdbool.h>
+void sort(int* arr, int n){
+    bool swapping = true;
+    while(swapping){
+        swapping = false;
+        for(int i = 1; i < n; i++){
+            if(arr[i-1] > arr[i]){
+                int temp;
+                temp = arr[i-1];
+                arr[i-1] = arr[i];
+                arr[i] = temp;
+                swapping = true;
+            }
+        }
+        n--;
+    }
+    return;
+}
+int mean(int arr[], int n){
+    int sum = 0;
+    for(int i = 0; i < n; i++){
+        sum += arr[i];
+    }
+    return (sum/n); 
+}
+#define FILENAME "data.txt"
+int main(){
+    FILE *diceData;
+    int numOfDice, numOfSides, numOfRolls,upperBound;
+    int lowerBound = 1;
+
+    diceData = fopen(FILENAME, "w");
+    srand(time(NULL));
+    printf("Please enter number of dice to throw: ");
+    scanf("%d", &numOfDice);
+    printf("\nEnter number of sides: ");
+    scanf("%d", &numOfSides);
+    printf("\nEnter a number to determine the amount of rolls to roll die: ");
+    scanf("%d", &numOfRolls);
+    int* diceSums = (int*)malloc(numOfRolls * sizeof(int));  
+    if(diceSums == NULL){
+        printf("Memory Allocation failed");
+        return 1;
+    }
+    upperBound = numOfSides;
+    for(int i = 0; i < numOfRolls;i++){
+        int sumOfDice = 0;
+        for(int j = 0; j < numOfDice; j++){
+            int value = rand() % (upperBound - lowerBound +1) + lowerBound;
+            sumOfDice += value;
+        }
+        diceSums[i] = sumOfDice; 
+    }
+    fprintf(diceData, "Number of rolls made: %d\n", numOfRolls);
+    sort(diceSums,numOfRolls);
+    for(int i =0; i<numOfRolls;i++){
+        fprintf(diceData,"%d\n",diceSums[i]);
+    }
+    fprintf(diceData, "Mean: %d", mean(diceSums, numOfRolls));
+
+    free(diceSums);
+    fclose(diceData);
+    return 0; 
+
+}
